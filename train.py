@@ -13,10 +13,12 @@ import torch.nn as nn
 import numpy as np
 # import model
 from utils.metric import calculate_psnr
-from utils.training_util import save_checkpoint,MovingAverage, load_checkpoint
+from utils.training_util import save_checkpoint, MovingAverage, load_checkpoint
 # from collections import OrderedDict
 import torch.nn as nn
+
 torch.backends.cudnn.enabled = False
+
 
 def train(args):
     torch.set_num_threads(args.num_workers)
@@ -114,9 +116,11 @@ def train(args):
 if __name__ == "__main__":
     # argparse
     parser = argparse.ArgumentParser(description='parameters for training')
-    parser.add_argument('--noise_dir', '-n', default='/home/dell/Downloads/noise', help='path to noise folder image')
-    parser.add_argument('--gt_dir', '-g', default='/home/dell/Downloads/gt', help='path to gt folder image')
-    parser.add_argument('--image_size', '-sz', default=128, type=int, help='size of image')
+    parser.add_argument('--noise_dir', '-n', default='/home/SENSETIME/sunxin/0_data/POLYU200/train/noised',
+                        help='path to noise folder image')
+    parser.add_argument('--gt_dir', '-g', default='/home/SENSETIME/sunxin/0_data/POLYU200/train/clean',
+                        help='path to gt folder image')
+    parser.add_argument('--image_size', '-sz', default=64, type=int, help='size of image')
     parser.add_argument('--batch_size', '-bs', default=4, type=int, help='batch size')
     parser.add_argument('--epoch', '-e', default=1000, type=int, help='batch size')
     parser.add_argument('--save_every', '-se', default=2, type=int, help='save_every')
@@ -128,7 +132,7 @@ if __name__ == "__main__":
     parser.add_argument('--cuda', '-c', action='store_true', help='whether to train on the GPU')
     parser.add_argument('--checkpoint', '-ckpt', type=str, default='checkpoints',
                         help='the checkpoint to eval')
-    parser.add_argument('--load_type', "-l" ,default="best", type=str, help='Load type best_or_latest ')
+    parser.add_argument('--load_type', "-l", default="best", type=str, help='Load type best_or_latest ')
 
     args = parser.parse_args()
     #

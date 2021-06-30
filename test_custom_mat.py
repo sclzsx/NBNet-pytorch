@@ -2,7 +2,7 @@ import torch
 import argparse
 from model.NBNet import NBNet
 # import h5py
-from utils.metric import calculate_psnr,calculate_ssim
+from utils.metric import calculate_psnr, calculate_ssim
 import os
 import matplotlib.pyplot as plt
 import numpy as np
@@ -17,6 +17,7 @@ import scipy.io
 torch.set_num_threads(4)
 torch.manual_seed(0)
 torch.manual_seed(0)
+
 
 def test(args):
     model = NBNet()
@@ -41,7 +42,7 @@ def test(args):
     all_clean_imgs = scipy.io.loadmat(args.gt)['ValidationGtBlocksSrgb']
     # noisy_path = sorted(glob.glob(args.noise_dir+ "/*.png"))
     # clean_path = [ i.replace("noisy","clean") for i in noisy_path]
-    i_imgs,i_blocks, _,_,_ = all_noisy_imgs.shape
+    i_imgs, i_blocks, _, _, _ = all_noisy_imgs.shape
     psnrs = []
     ssims = []
     # print(noisy_path)
@@ -69,23 +70,24 @@ def test(args):
                 plt.axis("off")
                 plt.suptitle(image_name + "   UP   :  PSNR : " + str(psnr_t) + " :  SSIM : " + str(ssim_t), fontsize=25)
                 plt.savefig(os.path.join(args.save_img, image_name + "_" + args.checkpoint + '.png'), pad_inches=0)
-    print("   AVG   :  PSNR : "+ str(np.mean(psnrs))+" :  SSIM : "+ str(np.mean(ssims)))
+    print("   AVG   :  PSNR : " + str(np.mean(psnrs)) + " :  SSIM : " + str(np.mean(ssims)))
 
 
 if __name__ == "__main__":
     # argparse
     parser = argparse.ArgumentParser(description='parameters for training')
-    parser.add_argument('--noise_dir','-n', default='../KPN_attention/data/ValidationNoisyBlocksSrgb.mat', help='path to noise image file')
-    parser.add_argument('--gt','-g', default='../KPN_attention/data/ValidationGtBlocksSrgb.mat', help='path to noise image file')
+    parser.add_argument('--noise_dir', '-n', default='../KPN_attention/data/ValidationNoisyBlocksSrgb.mat',
+                        help='path to noise image file')
+    parser.add_argument('--gt', '-g', default='../KPN_attention/data/ValidationGtBlocksSrgb.mat',
+                        help='path to noise image file')
     # parser.add_argument('--noise_dir','-n', default='/home/dell/Downloads/noise/0001_NOISY_SRGB', help='path to noise image file')
     parser.add_argument('--cuda', '-c', action='store_true', help='whether to train on the GPU')
     parser.add_argument('--checkpoint', '-ckpt', type=str, default='checkpoints',
                         help='the checkpoint to eval')
-    parser.add_argument('--save_img', "-s" ,default="", type=str, help='save image in eval_img folder ')
-    parser.add_argument('--load_type', "-l" ,default="best", type=str, help='Load type best_or_latest ')
+    parser.add_argument('--save_img', "-s", default="", type=str, help='save image in eval_img folder ')
+    parser.add_argument('--load_type', "-l", default="best", type=str, help='Load type best_or_latest ')
 
     args = parser.parse_args()
     #
     # args.noise_dir = '/home/dell/Downloads/FullTest/noisy'
     test(args)
-
