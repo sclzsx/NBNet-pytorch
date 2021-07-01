@@ -3,6 +3,7 @@ import argparse
 from model.NBNet import NBNet
 from utils.metric import calculate_psnr, calculate_ssim
 import os
+import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import torchvision.transforms as transforms
@@ -43,6 +44,7 @@ def do_test(args):
     for i in range(len(noisy_path)):
         noise = transforms.ToTensor()(Image.open(noisy_path[i]).convert('RGB'))[:, 0:args.image_size,
                 0:args.image_size].unsqueeze(0)
+        noise_np = cv2.cvtColor(np.array(trans(noise[0])), cv2.COLOR_RGB2BGR)
         noise = noise.to(device)
         begin = time.time()
         print(noise.size())
@@ -56,12 +58,17 @@ def do_test(args):
         if args.save_img != '':
             if not os.path.exists(args.save_img):
                 os.makedirs(args.save_img)
-            plt.figure(figsize=(15, 15))
-            plt.imshow(np.array(trans(pred[0])))
+
+            pred_np = cv2.cvtColor(np.array(trans(pred[0])), cv2.COLOR_RGB2BGR)
+            gt_np = cv2.cvtColor(np.array(trans(gt[0])), cv2.COLOR_RGB2BGR)
+
             image_name = noisy_path[i].split("/")[-1].split(".")[0]
-            plt.axis("off")
-            plt.suptitle(image_name + "   UP   :  PSNR : " + str(psnr_t) + " :  SSIM : " + str(ssim_t), fontsize=25)
-            plt.savefig(os.path.join(args.save_img, image_name + "_" + args.checkpoint + '.png'), pad_inches=0)
+            cv2.imwrite(os.path.join(args.save_img, image_name + "_" + args.checkpoint + '_gt.png'), gt_np,
+                        [int(cv2.IMWRITE_JPEG_QUALITY), 100])
+            cv2.imwrite(os.path.join(args.save_img, image_name + "_" + args.checkpoint + '_pred.png'), pred_np,
+                        [int(cv2.IMWRITE_JPEG_QUALITY), 100])
+            cv2.imwrite(os.path.join(args.save_img, image_name + "_" + args.checkpoint + '_noise.png'), noise_np,
+                        [int(cv2.IMWRITE_JPEG_QUALITY), 100])
 
 
 if __name__ == "__main__":
@@ -72,10 +79,11 @@ if __name__ == "__main__":
     parser.add_argument('--cuda', '-c', action='store_true', help='whether to train on the GPU')
     parser.add_argument('--checkpoint', '-ckpt', type=str, default='checkpoints',
                         help='the checkpoint to eval')
-    parser.add_argument('--image_size', '-sz', default=512, type=int, help='size of image')
+    parser.add_argument('--image_size', '-sz', default=128, type=int, help='size of image')
     parser.add_argument('--save_img', "-s", default="./results", type=str, help='save image in eval_img folder ')
     parser.add_argument('--load_type', "-l", default="best", type=str, help='Load type best_or_latest ')
 
     args = parser.parse_args()
 
-    do_test(args)
+    with torch.no_grad():
+        do_test(args)
