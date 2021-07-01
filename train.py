@@ -120,8 +120,8 @@ if __name__ == "__main__":
                         help='path to noise folder image')
     parser.add_argument('--gt_dir', '-g', default='/home/SENSETIME/sunxin/0_data/POLYU200/train/clean',
                         help='path to gt folder image')
-    parser.add_argument('--image_size', '-sz', default=128, type=int, help='size of image')
-    parser.add_argument('--batch_size', '-bs', default=1, type=int, help='batch size')
+    parser.add_argument('--image_size', '-sz', default=64, type=int, help='size of image')
+    parser.add_argument('--batch_size', '-bs', default=4, type=int, help='batch size')
     parser.add_argument('--epoch', '-e', default=50, type=int, help='batch size')
     parser.add_argument('--save_every', '-se', default=2, type=int, help='save_every')
     parser.add_argument('--loss_every', '-le', default=1, type=int, help='loss_every')
